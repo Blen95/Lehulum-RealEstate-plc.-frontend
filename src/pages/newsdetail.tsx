@@ -1,0 +1,29 @@
+import { useParams, useNavigate } from "react-router-dom";
+import { Container, Image, Title, Text, Button } from "@mantine/core";
+import { newsItems } from "../data/newsData";
+
+export default function NewsDetail() {
+  const { id } = useParams();
+  const navigate = useNavigate();
+  if (!id) {
+    return <div>Invalid news item.</div>;
+  }
+  const news = newsItems.find((item) => item.id === parseInt(id));
+
+  if (!news) {
+    return <Text className="p-10">News item not found.</Text>;
+  }
+
+  return (
+    <section className="py-16 bg-white">
+      <Container size="md">
+        <Image src={news.image} alt={news.title} radius="md" mb={30} />
+        <Title order={2} className="mb-4 text-red-600">{news.title}</Title>
+        <Text className="text-gray-700 text-lg leading-relaxed mb-8">{news.full}</Text>
+        <Button variant="outline" color="red" radius="xl" onClick={() => navigate("/#news")}>
+          ← Back to News & Updates
+        </Button>
+      </Container>
+    </section>
+  );
+}

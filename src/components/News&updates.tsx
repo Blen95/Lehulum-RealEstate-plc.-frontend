@@ -17,23 +17,32 @@ export default function NewsUpdates() {
           </Text>
         </div>
 
-        <div className="grid md:grid-cols-3 gap-8">
-          {newsItems.map((news) => (
-            <Card
-              key={news.id}
-              shadow="md"
-              radius="lg"
-              className="cursor-pointer transition-transform hover:scale-[1.02]"
-              onClick={() => navigate(`/news/${news.id}`)}
-            >
-              <Card.Section>
-                <Image src={news.image} alt={news.title} height={200} />
-              </Card.Section>
-              <Text weight={600} mt="md">{news.title}</Text>
-              <Text size="sm" color="dimmed">{news.short}</Text>
-            </Card>
-          ))}
-        </div>
+        <div className="grid-equal">
+  {newsItems.map((news) => (
+    <Card
+      key={news.id}
+      shadow="md"
+      radius="lg"
+      className="cursor-pointer transition-transform hover:scale-[1.02]"
+      onClick={() => navigate(`/news/${news.id}`)}
+    >
+      <Card.Section>
+        <Image
+          src={news.image}
+          alt={news.title}
+          style={{
+            objectFit: "cover",
+            width: "100%",
+            height: "200px"
+          }}
+        />
+      </Card.Section>
+      <Text weight={600} mt="md">{news.title}</Text>
+      <Text size="sm" color="dimmed">{news.short}</Text>
+    </Card>
+  ))}
+</div>
+
       </Container>
     </section>
   );

@@ -17,7 +17,22 @@ export default function NewsDetail() {
   return (
     <section className="py-16 bg-white">
       <Container size="md">
-        <Image src={news.image} alt={news.title} radius="md" mb={30} />
+        <Image
+  src={news.image}
+  alt={news.title}
+  radius="md"
+  className="mt-6 md:mt-12 mx-auto"
+  style={{
+    width: "100%",
+    maxWidth: "900px",   // controls how wide it gets
+    height: "400px",     // fixed height to prevent "long" look
+    objectFit: "cover",  // crops image instead of stretching
+    display: "block"
+  }}
+/>
+
+
+
         <Title order={2} className="mb-4 text-red-600">{news.title}</Title>
         <Text className="text-gray-700 text-lg leading-relaxed mb-8">{news.full}</Text>
         <Button variant="outline" color="red" radius="xl" onClick={() => navigate("/#news")}>

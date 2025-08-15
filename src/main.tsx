@@ -4,11 +4,18 @@ import ReactDOM from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
 import App from './App';
 import './index.css';
+import { MantineProvider } from '@mantine/core';
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
+    <MantineProvider
+      theme={{}}
+      defaultColorScheme="light"
+    >
     <BrowserRouter>
+    
       <App />
     </BrowserRouter>
+    </MantineProvider>
   </React.StrictMode>
 );

@@ -35,9 +35,15 @@ export default function NewsDetail() {
 
         <Title order={2} className="mb-4 text-red-600">{news.title}</Title>
         <Text className="text-gray-700 text-lg leading-relaxed mb-8">{news.full}</Text>
-        <Button variant="outline" color="red" radius="xl" onClick={() => navigate("/#news")}>
-          ← Back to News & Updates
-        </Button>
+        <Button
+  variant="outline"
+  color="red"
+  radius="xl"
+  onClick={() => navigate("/", { state: { targetId: "news" } })}
+>
+  ← Back to News & Updates
+</Button>
+
       </Container>
     </section>
   );

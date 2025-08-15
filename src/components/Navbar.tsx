@@ -118,7 +118,7 @@ const scrollToSection = (id: string) => {
         padding="md"
         size="80%"
         title="Menu"
-        position="right"
+        position="left"
       >
         <ScrollArea style={{ height: "100%" }}>
           <div className="flex flex-col space-y-4">

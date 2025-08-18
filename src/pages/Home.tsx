@@ -35,13 +35,14 @@ useEffect(() => {
 
   return (
     <>
+            <Navbar />
       
       <HeroSection/>
       <OurStory/>
       <Apartments/>
       <NewsUpdates/>
       <ContactUs/>
-    
+    <Footer/>
     </>
     
 

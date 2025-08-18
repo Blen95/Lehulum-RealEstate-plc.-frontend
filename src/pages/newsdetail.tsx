@@ -1,6 +1,8 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { Container, Image, Title, Text, Button } from "@mantine/core";
 import { newsItems } from "../data/newsData";
+import Footer from "../components/Footer";
+import Navbar from "../components/Navbar";
 
 export default function NewsDetail() {
   const { id } = useParams();
@@ -15,7 +17,10 @@ export default function NewsDetail() {
   }
 
   return (
-    <section className="py-16 bg-white">
+    <>
+    <Navbar/>
+        <section className="py-16 bg-white">
+      
       <Container size="md">
         <Image
   src={news.image}
@@ -45,6 +50,9 @@ export default function NewsDetail() {
 </Button>
 
       </Container>
+        
     </section>
+      <Footer/>
+    </>
   );
 }

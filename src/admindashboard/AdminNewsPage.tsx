@@ -1,27 +1,36 @@
 // src/pages/admin/AdminNewsPage.jsx
 import { useEffect, useState } from "react";
 import {
-  TextInput,
-  Textarea,
-  Button,
   Card,
   Image,
-  Group,
+  Text,
+  Title,
+  Container,
+  Button,
   Modal,
-  ScrollArea,
+  TextInput,
+  Textarea,
   FileInput,
+  Group,
+  ScrollArea,
+  Center,
+  Loader,
 } from "@mantine/core";
 import { showNotification } from "@mantine/notifications";
-import { fetchNews, addNews, updateNews, deleteNews } from "../api/adminNewsapi.js";
+import {
+  fetchNews,
+  addNews,
+  updateNews,
+  deleteNews,
+  getImageUrl,
+} from "../api/adminNewsapi.js";
 import AdminNavbar from "./adminnav.js";
 
 export default function AdminNewsPage() {
   const [news, setNews] = useState([]);
   const [loading, setLoading] = useState(true);
-
   const [modalOpen, setModalOpen] = useState(false);
   const [editingNews, setEditingNews] = useState(null);
-
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [image, setImage] = useState(null);
@@ -29,8 +38,10 @@ export default function AdminNewsPage() {
   const loadNews = async () => {
     setLoading(true);
     try {
-      const data = await fetchNews();
-      setNews(data.data);
+      const res = await fetchNews();
+      setNews(res.data); // Assuming { data: [...] }
+    } catch (err) {
+      showNotification({ title: "Error", message: "Failed to load news.", color: "red" });
     } finally {
       setLoading(false);
     }
@@ -40,15 +51,23 @@ export default function AdminNewsPage() {
     loadNews();
   }, []);
 
+  const resetForm = () => {
+    setTitle("");
+    setContent("");
+    setImage(null);
+    setEditingNews(null);
+    setModalOpen(false);
+  };
+
   const handleSubmit = async () => {
     const payload = { title, content, image };
     try {
       if (editingNews) {
         await updateNews(editingNews.id, payload);
-        showNotification({ title: "Success", message: "Article updated!", color: "green" });
+        showNotification({ title: "Success", message: "News updated!", color: "green" });
       } else {
         await addNews(payload);
-        showNotification({ title: "Success", message: "Article posted!", color: "green" });
+        showNotification({ title: "Success", message: "News posted!", color: "green" });
       }
       resetForm();
       loadNews();
@@ -62,6 +81,7 @@ export default function AdminNewsPage() {
     setEditingNews(newsItem);
     setTitle(newsItem.title);
     setContent(newsItem.content);
+    setImage(null); // optional: reset image unless user re-uploads
     setModalOpen(true);
   };
 
@@ -69,60 +89,83 @@ export default function AdminNewsPage() {
     if (confirm("Are you sure you want to delete this article?")) {
       try {
         await deleteNews(id);
-        showNotification({ title: "Deleted", message: "Article deleted!", color: "red" });
+        showNotification({ title: "Deleted", message: "News deleted!", color: "red" });
         loadNews();
       } catch (err) {
         console.error(err);
-        showNotification({ title: "Error", message: "Failed to delete article.", color: "red" });
+        showNotification({ title: "Error", message: "Failed to delete.", color: "red" });
       }
     }
   };
 
-  const resetForm = () => {
-    setTitle("");
-    setContent("");
-    setImage(null);
-    setEditingNews(null);
-    setModalOpen(false);
-  };
-
   return (
     <div>
-      <AdminNavbar/>
-      <Button onClick={() => setModalOpen(true)} mb="md" style={{marginTop:"100px"}}>
-        Add News/Article
-      </Button>
+      <AdminNavbar />
 
-      <ScrollArea style={{ height: 500 }}>
-        {loading ? (
-          <div>Loading...</div>
-        ) : (
-          news.map((item) => (
-            <Card key={item.id} shadow="sm" p="lg" mb="md">
-              {item.image && (
-                <Image
-                  src={`http://localhost:8000/storage/${item.image}`}
-                  height={160}
-                  mb="sm"
-                  withPlaceholder
-                />
-              )}
-              <h3>{item.title}</h3>
-              <pre style={{ whiteSpace: "pre-wrap" }}>{item.content}</pre>
-              <Group mt="sm">
-                <Button size="xs" onClick={() => handleEdit(item)}>
-                  Edit
-                </Button>
-                <Button size="xs" color="red" onClick={() => handleDelete(item.id)}>
-                  Delete
-                </Button>
-              </Group>
-            </Card>
-          ))
-        )}
-      </ScrollArea>
+      <section className="py-16 bg-gray-50">
+        <Container>
+          <div className="text-center mb-12 mt-8">
+            <div className="inline-block bg-red-500 text-white px-6 py-2  mb-4">
+              <Title>Manage News & Updates</Title>
+            </div>
+            <Text className="text-gray-600">Add, edit or remove news articles.</Text>
+           <Button
+  mt="md"
+  color="#EA3C53" // light green (you can try green.1 or green.0 for even lighter)
+  variant="filled" // keeps it soft, not fully filled
+  onClick={() => setModalOpen(true)}
+>
+  + Add News Article
+</Button>
 
-      <Modal opened={modalOpen} onClose={resetForm} title={editingNews ? "Edit News" : "Add News"}>
+          </div>
+
+          {loading ? (
+            <Center>
+              <Loader color="red" />
+            </Center>
+          ) : (
+            <div className="grid-equal">
+              {news.map((item) => (
+                <Card key={item.id} shadow="md" radius="lg">
+                  <Card.Section>
+                    <Image
+                      src={getImageUrl(item.image)}
+                      alt={item.title}
+                      style={{
+                        objectFit: "cover",
+                        width: "100%",
+                        height: "200px",
+                      }}
+                    />
+                  </Card.Section>
+                  <Text weight={600} mt="md">
+                    {item.title}
+                  </Text>
+                  <Text size="sm" color="dimmed" className="line-clamp-3">
+                    {item.content}
+                  </Text>
+                  <Group mt="md" position="right">
+                    <Button size="xs"  color="#36454F" onClick={() => handleEdit(item)}>
+                      Edit
+                    </Button>
+                    <Button size="xs" color="red" onClick={() => handleDelete(item.id)}>
+                      Delete
+                    </Button>
+                  </Group>
+                </Card>
+              ))}
+            </div>
+          )}
+        </Container>
+      </section>
+
+      <Modal
+        opened={modalOpen}
+        onClose={resetForm}
+        title={editingNews ? "Edit News" : "Add News"}
+        centered
+      >
         <TextInput
           placeholder="Title"
           label="Title"

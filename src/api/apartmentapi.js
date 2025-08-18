@@ -44,3 +44,31 @@ export const updateApartmentPricing = async (apartmentId, pricingData) => {
   );
   return data;
 };
+// Update apartment description
+export const updateApartmentDescription = async (apartmentId, description) => {
+  const { data } = await API.patch(
+    `/apartments/${apartmentId}/description`,
+    { description },
+    {
+      headers: authHeaders(),
+    }
+  );
+  return data;
+};
+// Update apartment image
+export const updateApartmentImage = async (apartmentId, formData) => {
+    formData.append("_method", "PATCH");
+  const { data } = await API.post(
+    `/apartments/${apartmentId}/image`,
+    formData,
+    {
+      headers: {
+        ...authHeaders(),
+        "Content-Type": "multipart/form-data",
+      },
+    }
+  );
+  return data;
+};
+
+

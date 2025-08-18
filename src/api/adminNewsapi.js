@@ -17,6 +17,10 @@ export const fetchNews = async (page = 1) => {
   const { data } = await API.get(`/news?page=${page}`, { headers: authHeaders() });
   return data;
 };
+export const fetchNewsById = async (id) => {
+  const { data } = await API.get(`/news/${id}`);
+  return data;
+};
 
 // Add news
 export const addNews = async (payload) => {
@@ -59,3 +63,4 @@ export const deleteNews = async (id) => {
   const { data } = await API.delete(`/news/${id}`, { headers: authHeaders() });
   return data;
 };
+export const getImageUrl = (path) => `http://127.0.0.1:8000/storage/${path}`;

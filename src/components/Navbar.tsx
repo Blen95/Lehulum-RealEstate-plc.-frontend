@@ -4,7 +4,6 @@ import { useDisclosure } from "@mantine/hooks";
 import { useLocation, useNavigate } from "react-router-dom";
 import Logo from "../assets/lehulumlogo-fotor-bg-remover.png";
 
-
 const sections = [
   { id: "home", label: "Home" },
   { id: "story", label: "Our Story" },
@@ -20,51 +19,48 @@ export default function Navbar() {
   const navigate = useNavigate();
 
   // Detect section closest to top on scroll
-useEffect(() => {
-  const handleScroll = () => {
-    if (location.pathname.startsWith("/news/")) {
-      setActiveSection("news");
-      return;
-    }
-
-
-    let closestId = sections[0].id;
-    let closestDistance = Infinity;
-
-    sections.forEach(({ id }) => {
-      const el = document.getElementById(id);
-      if (el) {
-        const distance = Math.abs(el.getBoundingClientRect().top - 80); 
-        if (distance < closestDistance) {
-          closestDistance = distance;
-          closestId = id;
-        }
+  useEffect(() => {
+    const handleScroll = () => {
+      if (location.pathname.startsWith("/news/")) {
+        setActiveSection("news");
+        return;
       }
-    });
 
-    setActiveSection(closestId);
-  };
+      let closestId = sections[0].id;
+      let closestDistance = Infinity;
 
-  window.addEventListener("scroll", handleScroll);
-  handleScroll(); 
-  return () => window.removeEventListener("scroll", handleScroll);
-}, [location.pathname]);
+      sections.forEach(({ id }) => {
+        const el = document.getElementById(id);
+        if (el) {
+          const distance = Math.abs(el.getBoundingClientRect().top - 80);
+          if (distance < closestDistance) {
+            closestDistance = distance;
+            closestId = id;
+          }
+        }
+      });
 
+      setActiveSection(closestId);
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    handleScroll();
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [location.pathname]);
 
   // Scroll or navigate to section
-const scrollToSection = (id: string) => {
-  if (window.location.pathname !== "/") {
-    navigate("/", { state: { targetId: id } });
-  } else {
-    document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
-  }
-  close(); // optional: close drawer
-};
-
+  const scrollToSection = (id: string) => {
+    if (window.location.pathname !== "/") {
+      navigate("/", { state: { targetId: id } });
+    } else {
+      document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
+    }
+    close();
+  };
 
   return (
-    <nav className="fixed top-0 left-0 w-full bg-white shadow z-50 py-4 px-6">
-       <div className="flex justify-between items-center w-full">
+    <nav className="fixed top-0 left-0 w-full bg-white/90 backdrop-blur-md shadow z-50 py-4 px-6">
+      <div className="flex justify-between items-center w-full">
         {/* Logo */}
         <div
           className="flex items-center cursor-pointer"
@@ -83,10 +79,10 @@ const scrollToSection = (id: string) => {
                 className={`px-4 py-2 rounded-full transition font-medium
                   ${
                     activeSection === id
-                      ? "shadow-md shadow-red-200 text-red-600"
+                      ? "shadow-md shadow-rose-200 text-[#B22234]"
                       : "text-gray-700"
                   }
-                  hover:text-red-500`}
+                  hover:text-[#FF6B6B]`}
               >
                 {label}
               </button>
@@ -95,9 +91,10 @@ const scrollToSection = (id: string) => {
 
           <Button
             radius="xl"
-            color="red"
-            className={`px-5 shadow transition ${
-              activeSection === "contact" ? "shadow-lg shadow-red-300" : ""
+            variant="gradient"
+            gradient={{ from: "#B22234", to: "#FF6B6B" }}
+            className={`px-5 shadow transition font-semibold uppercase tracking-wide ${
+              activeSection === "contact" ? "shadow-lg shadow-rose-300" : ""
             }`}
             onClick={() => scrollToSection("contact")}
           >
@@ -129,10 +126,10 @@ const scrollToSection = (id: string) => {
                 className={`px-4 py-2 rounded-full text-left transition font-medium
                   ${
                     activeSection === id
-                      ? "bg-red-50 text-red-600"
+                      ? "bg-rose-50 text-[#B22234]"
                       : "text-gray-700"
                   }
-                  hover:text-red-500`}
+                  hover:text-[#FF6B6B]`}
               >
                 {label}
               </button>

@@ -11,9 +11,10 @@ import {
 } from "@mantine/core";
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { fetchApartments } from "../api/apartmentapi"; // Update path if needed
+import { fetchApartments } from "../api/apartmentapi"; // update if needed
 
-const EXCLUDED_TYPES = ["Pharmacy", "Bank", "First Floor", "G Floor"];
+// ⬇️ put exclusion list here
+const EXCLUDED_TYPES = ["Pharmacy", "G.Floor Bank A", "First Floor", "G Floor"];
 
 export default function ApartmentCards() {
   const [apartments, setApartments] = useState([]);
@@ -21,25 +22,31 @@ export default function ApartmentCards() {
   useEffect(() => {
     const loadApartments = async () => {
       const data = await fetchApartments();
+
+      // filter out excluded types
       const filtered = data.filter(
         (apt) => !EXCLUDED_TYPES.includes(apt.type)
       );
+
+      // Penthouse appears normally in filtered list (no separation)
       setApartments(filtered);
     };
     loadApartments();
   }, []);
 
-  // Separate Penthouse
-  const penthouse = apartments.find(
-    (apt) => apt.type === "Penthouse 4B Type"
-  );
-  const otherApartments = apartments.filter(
-    (apt) => apt.type !== "Penthouse 4B Type"
-  );
-
   return (
-    <Box py={50}>
-      <Container size="xl">
+    <Box
+      py={80}
+      className="relative w-full overflow-hidden bg-gradient-to-br from-[#fffaf9] via-white to-[#fefefe]"
+    >
+      {/* Decorative blurred background shapes */}
+      <div className="absolute inset-0 z-0">
+        <div className="absolute -top-32 -left-20 w-[25rem] h-[25rem] bg-red-100 rounded-full opacity-10 blur-3xl" />
+        <div className="absolute bottom-0 right-0 w-[20rem] h-[20rem] bg-rose-200 rounded-full opacity-10 blur-2xl" />
+      </div>
+
+      <Container size="xl" className="relative z-10">
+        {/* Section Title */}
         <motion.div
           initial={{ opacity: 0, y: 40 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -48,31 +55,33 @@ export default function ApartmentCards() {
           <Title
             order={2}
             ta="center"
-            size="1.8rem"
+            size="2rem"
             fw={700}
             mb={50}
-            ff="serif"
+            className="text-gray-900"
           >
-            <span className="bg-gradient-to-r from-red-500 to-red-400 bg-clip-text text-transparent">
-              Step inside your dream home -
+            <span className="bg-gradient-to-r from-[#B22234] to-[#FF6B6B] bg-clip-text text-transparent">
+              Step inside your dream home
             </span>{" "}
-            spacious, stylish, and waiting for you.
+            – spacious, stylish, and waiting for you.
           </Title>
         </motion.div>
 
-        {/* Grid for regular apartments */}
+        {/* Grid with all apartments (Penthouse included inline) */}
         <Grid gutter="md">
-          {otherApartments.map((apt, idx) => (
+          {apartments.map((apt, idx) => (
             <Grid.Col span={{ base: 12, sm: 6, md: 4 }} key={idx}>
               <Card
                 shadow="md"
                 radius="xl"
-                className="transition-transform duration-300 hover:scale-105"
+                className="transition-transform duration-300 hover:scale-105 hover:shadow-xl"
                 style={{
                   overflow: "hidden",
                   position: "relative",
+                  background: "white",
                 }}
               >
+                {/* Sold Out badge */}
                 {apt.remaining_available === 0 && (
                   <Badge
                     color="red"
@@ -87,6 +96,8 @@ export default function ApartmentCards() {
                     Sold Out
                   </Badge>
                 )}
+
+                {/* Image + grey overlay text */}
                 <Card.Section style={{ position: "relative", height: 420 }}>
                   <Image
                     src={apt.image_url}
@@ -102,19 +113,15 @@ export default function ApartmentCards() {
                       width: "100%",
                       padding: "1rem",
                       background:
-                        "linear-gradient(to top, rgba(0, 0, 0, 0.6), transparent)",
+                        "linear-gradient(to top, rgba(0,0,0,0.65), rgba(0,0,0,0.1))",
                       color: "white",
                     }}
                   >
                     <Text fw={700} size="lg">
                       {apt.type}
                     </Text>
-                    <Text size="sm" style={{ opacity: 0.85 }}>
-                      {apt.area}
-                    </Text>
-                    <Text size="sm" style={{ opacity: 0.9 }}>
-                      {apt.description}
-                    </Text>
+                    <Text size="sm">{apt.area}</Text>
+                    <Text size="sm">{apt.description}</Text>
                   </Box>
                 </Card.Section>
               </Card>
@@ -122,82 +129,7 @@ export default function ApartmentCards() {
           ))}
         </Grid>
 
-        {/* Penthouse Layout */}
-        {penthouse && (
-          <Grid gutter="lg" mt="xl">
-            <Grid.Col span={{ base: 12, sm: 8, md: 11 }} mx="auto">
-              <Card
-                shadow="xl"
-                radius="xl"
-                className="transition-transform duration-300 hover:scale-105"
-                style={{
-                  maxHeight: 600,
-                  overflow: "hidden",
-                  position: "relative",
-                  border: "2px solid gold",
-                }}
-              >
-                {penthouse.remaining_available === 0 && (
-                  <Badge
-                    color="red"
-                    variant="filled"
-                    style={{
-                      position: "absolute",
-                      top: 10,
-                      left: 10,
-                      zIndex: 2,
-                    }}
-                  >
-                    Sold Out
-                  </Badge>
-                )}
-                <Card.Section>
-                  <Image
-                    src={penthouse.image_url}
-                    alt={penthouse.type}
-                    height={360} // increased from 280
-                    fit="cover"
-                  />
-                  <Box
-                    style={{
-                      position: "absolute",
-                      bottom: 0,
-                      left: 0,
-                      width: "60%",
-                      background:
-                        "linear-gradient(to top, rgba(0,0,0,0.7), transparent)",
-                      color: "white",
-                      padding: "1rem",
-                    }}
-                  >
-                    <Text fw={700} size="xl">
-                      {penthouse.type}
-                    </Text>
-                    <Text size="sm" style={{ opacity: 0.85 }}>
-                      {penthouse.area}
-                    </Text>
-                    <Text size="sm" style={{ opacity: 0.9 }}>
-                      {penthouse.description}
-                    </Text>
-                  </Box>
-                </Card.Section>
-              </Card>
-            </Grid.Col>
-          </Grid>
-        )}
-
-        {/* Button */}
-        <div className="text-center mt-10">
-          <Button
-            radius="xl"
-            color="red"
-            size="md"
-            component="a"
-            href="/apartments"
-          >
-            More on Apartments
-          </Button>
-        </div>
+        
       </Container>
     </Box>
   );

@@ -15,6 +15,7 @@ import {
   ScrollArea,
   Center,
   Loader,
+  Stack,
 } from "@mantine/core";
 import { showNotification } from "@mantine/notifications";
 import {
@@ -39,7 +40,7 @@ export default function AdminNewsPage() {
     setLoading(true);
     try {
       const res = await fetchNews();
-      setNews(res.data); // Assuming { data: [...] }
+      setNews(res.data);
     } catch (err) {
       showNotification({ title: "Error", message: "Failed to load news.", color: "red" });
     } finally {
@@ -81,7 +82,7 @@ export default function AdminNewsPage() {
     setEditingNews(newsItem);
     setTitle(newsItem.title);
     setContent(newsItem.content);
-    setImage(null); // optional: reset image unless user re-uploads
+    setImage(null);
     setModalOpen(true);
   };
 
@@ -99,66 +100,94 @@ export default function AdminNewsPage() {
   };
 
   return (
-    <div>
-      <AdminNavbar />
+<div className="relative w-full overflow-hidden bg-gradient-to-br from-[#fffaf9] via-white to-[#fefefe] min-h-screen py-16 px-8">
+      {/* Decorative floating shapes */}
+      <div className="absolute inset-0 z-0">
+        <div className="absolute -top-16 -right-32 w-[35rem] h-[35rem] bg-red-200 rounded-full opacity-10 blur-3xl" />
+        <div className="absolute -bottom-10 left-0 w-[25rem] h-[25rem] bg-rose-100 rounded-full opacity-10 blur-2xl" />
+      </div>
 
-      <section className="py-16 bg-gray-50">
-        <Container>
-          <div className="text-center mb-12 mt-8">
-            <div className="inline-block bg-red-500 text-white px-6 py-2  mb-4">
-              <Title>Manage News & Updates</Title>
-            </div>
-            <Text className="text-gray-600">Add, edit or remove news articles.</Text>
-           <Button
-  mt="md"
-  color="#EA3C53" // light green (you can try green.1 or green.0 for even lighter)
-  variant="filled" // keeps it soft, not fully filled
-  onClick={() => setModalOpen(true)}
->
-  + Add News Article
-</Button>
+      <AdminNavbar />
+      <Container size="xl" className="relative z-10">
+        <div className="text-center mb-12 mt-8">
+          <div className="inline-block px-6 py-2 mb-4">
+            <Title order={2} ta="center" size="2rem" fw={700} mb={50} ff="serif">
+            <span className="bg-gradient-to-r from-[#B22234] to-[#FF6B6B] bg-clip-text text-transparent">
+              Manage News/Article
+            </span>{" "}
+            
+          </Title>
 
           </div>
+        
 
-          {loading ? (
-            <Center>
-              <Loader color="red" />
-            </Center>
-          ) : (
-            <div className="grid-equal">
-              {news.map((item) => (
-                <Card key={item.id} shadow="md" radius="lg">
-                  <Card.Section>
-                    <Image
-                      src={getImageUrl(item.image)}
-                      alt={item.title}
-                      style={{
-                        objectFit: "cover",
-                        width: "100%",
-                        height: "200px",
-                      }}
-                    />
-                  </Card.Section>
-                  <Text weight={600} mt="md">
-                    {item.title}
-                  </Text>
-                  <Text size="sm" color="dimmed" className="line-clamp-3">
-                    {item.content}
-                  </Text>
-                  <Group mt="md" position="right">
-                    <Button size="xs"  color="#36454F" onClick={() => handleEdit(item)}>
-                      Edit
-                    </Button>
-                    <Button size="xs" color="red" onClick={() => handleDelete(item.id)}>
-                      Delete
-                    </Button>
-                  </Group>
-                </Card>
-              ))}
-            </div>
-          )}
-        </Container>
-      </section>
+          <Center>
+  <Button
+    mt="md"
+    variant="gradient"
+    gradient={{ from: '#B22234', to: '#FF6B6B' }}
+    onClick={() => setModalOpen(true)}
+  >
+    + Add News Article
+  </Button>
+</Center>
+
+        </div>
+
+        {loading ? (
+          <Center>
+            <Loader color="#CBAF88" />
+          </Center>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+            {news.map((item) => (
+              <Card
+  key={item.id}
+  shadow="lg"
+  radius="xl"
+  className="transition-all hover:scale-[1.02] hover:shadow-2xl overflow-hidden flex flex-col"
+>
+  <Card.Section>
+    <Image
+      src={getImageUrl(item.image)}
+      alt={item.title}
+      style={{
+        objectFit: "cover",
+        width: "100%",
+        height: "200px",
+      }}
+    />
+  </Card.Section>
+
+  <Text weight={600} mt="md" className="line-clamp-2">
+    {item.title}
+  </Text>
+  <Text size="sm" color="dimmed" className="line-clamp-3 mt-1">
+    {item.content}
+  </Text>
+
+  {/* spacer to push buttons to bottom */}
+  <div className="flex-grow" />
+
+  <Group mt="md" position="apart">
+    <Button
+      size="xs"
+      variant="filled"
+      color="grey"
+      onClick={() => handleEdit(item)}
+    >
+      Edit
+    </Button>
+    <Button size="xs" color="red" onClick={() => handleDelete(item.id)}>
+      Delete
+    </Button>
+  </Group>
+</Card>
+
+            ))}
+          </div>
+        )}
+      </Container>
 
       <Modal
         opened={modalOpen}
@@ -166,36 +195,41 @@ export default function AdminNewsPage() {
         title={editingNews ? "Edit News" : "Add News"}
         centered
       >
-        <TextInput
-          placeholder="Title"
-          label="Title"
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-          mb="sm"
-        />
-        <Textarea
-          placeholder="Content"
-          label="Content"
-          value={content}
-          onChange={(e) => setContent(e.target.value)}
-          minRows={5}
-          mb="sm"
-        />
-        <FileInput
-          label="Upload Image"
-          placeholder="Choose image"
-          value={image}
-          onChange={setImage}
-          accept="image/*"
-          mb="sm"
-          clearable
-        />
-        {image && typeof image !== "string" && (
-          <Image src={URL.createObjectURL(image)} height={160} mb="sm" />
-        )}
-        <Group position="right" mt="md">
-          <Button onClick={handleSubmit}>{editingNews ? "Update" : "Post"}</Button>
-        </Group>
+        <Stack>
+          <TextInput
+            placeholder="Title"
+            label="Title"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+          />
+          <Textarea
+            placeholder="Content"
+            label="Content"
+            value={content}
+            onChange={(e) => setContent(e.target.value)}
+            minRows={5}
+          />
+          <FileInput
+            label="Upload Image"
+            placeholder="Choose image"
+            value={image}
+            onChange={setImage}
+            accept="image/*"
+            clearable
+          />
+          {image && typeof image !== "string" && (
+            <Image src={URL.createObjectURL(image)} height={160} mb="sm" />
+          )}
+          <Group position="right" mt="md">
+            <Button
+              variant="gradient"
+              gradient={{ from: '#B22234', to: '#FF6B6B' }}
+              onClick={handleSubmit}
+            >
+              {editingNews ? "Update" : "Post"}
+            </Button>
+          </Group>
+        </Stack>
       </Modal>
     </div>
   );

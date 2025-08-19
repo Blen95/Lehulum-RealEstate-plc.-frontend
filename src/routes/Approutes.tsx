@@ -6,6 +6,7 @@ import AdminNewsPage from "../admindashboard/AdminNewsPage";
 import AdminLoginPage from "../admindashboard/AdminLoginPage.jsx";
 import ClientRequestsPage from "../admindashboard/clientrequestpage.js";
 import Adminapartment from "../admindashboard/adminapartment.js";
+import AdminDashboard from "../admindashboard/adminhome";
 export default function AppRoutes() {
   return (
     <>
@@ -16,7 +17,7 @@ export default function AppRoutes() {
     </Routes>
 <Routes>
       <Route path="/admin" element={<AdminLoginPage />} />
-      <Route path="/admin/home" element={<AdminHome />} />
+      <Route path="/admin/home" element={<AdminDashboard />} />
       <Route path ="/admin/news" element={<AdminNewsPage/>}/>
       <Route path="/admin/requests" element={<ClientRequestsPage/>}/>
       <Route path="/admin/apartments" element={<Adminapartment/>}/>

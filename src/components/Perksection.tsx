@@ -5,26 +5,17 @@ import { useRef } from "react";
 import { motion } from "framer-motion";
 
 const perks = [
-  {
-    name: "Modern Gym Experience",
-    img: "/gym.jpg",
-  },
-  {
-    name: "Fine Dining Restaurant",
-    img: "/restaurant.jpg",
-  },
-  {
-    name: "Elegant Swimming Pool",
-    img: "/pool.jpg",
-  },
+  { name: "Modern Gym Experience", img: "/gym.jpg" },
+  { name: "Fine Dining Restaurant", img: "/restaurant.jpg" },
+  { name: "Elegant Swimming Pool", img: "/pool.jpg" },
 ];
 
 export default function PerksSection() {
   const autoplay = useRef(Autoplay({ delay: 3000 }));
 
   return (
-    <Box py={60} style={{ backgroundColor: "#fafafa" }}>
-      {/* Title */}
+    <Box py={80} className="relative w-full overflow-hidden bg-gradient-to-br from-[#fffaf9] via-white to-[#fefefe]" id="apartments">
+      {/* Section Title */}
       <motion.div
         initial={{ opacity: 0, y: 40 }}
         whileInView={{ opacity: 1, y: 0 }}
@@ -33,12 +24,12 @@ export default function PerksSection() {
         <Title
           order={2}
           ta="center"
-          size="1.8rem"
+          size="2rem"
           fw={700}
           mb={50}
           ff="serif"
         >
-          <span className="bg-gradient-to-r from-red-500 to-red-400 bg-clip-text text-transparent font-bold">
+          <span className="bg-gradient-to-r from-[#B22234] to-[#FF6B6B] bg-clip-text text-transparent font-bold">
             Unwind and Indulge
           </span>{" "}
           — Amenities Crafted for the Elevated Life.
@@ -56,8 +47,12 @@ export default function PerksSection() {
         onMouseEnter={autoplay.current.stop}
         onMouseLeave={autoplay.current.reset}
         style={{
-            left:100,
-            width:'85%'}}
+          maxWidth: "85%",
+          margin: "0 auto",
+          borderRadius: "16px",
+          overflow: "hidden",
+          boxShadow: "0 8px 24px rgba(0,0,0,0.1)",
+        }}
       >
         {perks.map((perk, idx) => (
           <Carousel.Slide key={idx}>
@@ -65,7 +60,7 @@ export default function PerksSection() {
               style={{
                 position: "relative",
                 height: "100%",
-                borderRadius: "12px",
+                borderRadius: "16px",
                 overflow: "hidden",
               }}
             >
@@ -76,7 +71,7 @@ export default function PerksSection() {
                   width: "100%",
                   height: "100%",
                   objectFit: "cover",
-                  transition: "transform 0.4s ease, filter 0.3s ease",
+                  transition: "transform 0.4s ease, filter 0.3s ease, box-shadow 0.3s ease",
                 }}
                 className="perk-image"
               />
@@ -85,7 +80,7 @@ export default function PerksSection() {
                   position: "absolute",
                   inset: 0,
                   background:
-                    "linear-gradient(to top, rgba(0,0,0,0.6), rgba(0,0,0,0.1))",
+                    "linear-gradient(to top, rgba(0,0,0,0.65), rgba(0,0,0,0.15))",
                   display: "flex",
                   alignItems: "flex-end",
                   padding: "20px",
@@ -112,8 +107,9 @@ export default function PerksSection() {
       <style>
         {`
           .perk-image:hover {
-            transform: scale(1.03);
-            filter: brightness(1.05);
+            transform: scale(1.04);
+            filter: brightness(1.08);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.25);
           }
         `}
       </style>

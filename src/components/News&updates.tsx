@@ -9,7 +9,8 @@ import {
   Center,
 } from "@mantine/core";
 import { useNavigate } from "react-router-dom";
-import { fetchNews, getImageUrl } from "../api/adminNewsapi.js"; // Adjust the path as necessary
+import { fetchNews, getImageUrl } from "../api/adminNewsapi.js";
+
 export default function NewsUpdates() {
   const navigate = useNavigate();
   const [newsItems, setNewsItems] = useState([]);
@@ -19,8 +20,8 @@ export default function NewsUpdates() {
   useEffect(() => {
     const loadNews = async () => {
       try {
-        const res = await fetchNews(); // default page 1
-        setNewsItems(res.data); // assuming API returns { data: [...] }
+        const res = await fetchNews();
+        setNewsItems(res.data);
       } catch (err) {
         setError("Failed to load news.");
       } finally {
@@ -32,17 +33,31 @@ export default function NewsUpdates() {
   }, []);
 
   return (
-    <section id="news" className="py-16 bg-gray-50">
-      <Container>
+    <section
+  id="news"
+  className="relative w-full overflow-hidden bg-gradient-to-br from-[#fffaf9] via-white to-[#fefefe] pt-12 pb-20 px-6"
+>
+
+      {/* Decorative floating shapes */}
+      <div className="absolute inset-0 z-0">
+        <div className="absolute -top-20 -left-32 w-[30rem] h-[30rem] bg-red-200 rounded-full opacity-10 blur-3xl" />
+        <div className="absolute -bottom-10 right-0 w-[25rem] h-[25rem] bg-rose-100 rounded-full opacity-10 blur-2xl" />
+      </div>
+
+      <Container className="relative z-10">
+        {/* Section Title */}
         <div className="text-center mb-12">
-          <div className="inline-block bg-red-500 text-white px-6 py-2 rounded-full mb-4">
-            <Title order={2}>News & Updates</Title>
+          <div className="inline-block px-6 py-3 rounded-full shadow-lg bg-gradient-to-r from-[#B22234] to-[#FF6B6B]">
+            <Title
+              order={3}
+              className="text-xl font-bold tracking-wide text-white font-serif"
+            >
+              News & Updates
+            </Title>
           </div>
-          <Text className="text-gray-600">
-            Stay in the Loop – Updates, Progress & Exciting Announcements.
-          </Text>
         </div>
 
+        {/* Content */}
         {loading ? (
           <Center>
             <Loader color="red" />
@@ -52,30 +67,30 @@ export default function NewsUpdates() {
             {error}
           </Text>
         ) : (
-          <div className="grid-equal">
+          <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
             {newsItems.map((news) => (
               <Card
                 key={news.id}
-                shadow="md"
-                radius="lg"
-                className="cursor-pointer transition-transform hover:scale-[1.02]"
+                shadow="lg"
+                radius="xl"
+                className="cursor-pointer transition-all hover:scale-[1.02] hover:shadow-xl flex flex-col"
                 onClick={() => navigate(`/news/${news.id}`)}
               >
                 <Card.Section>
                   <Image
-  src={getImageUrl(news.image)}
-  alt={news.title}
-  style={{
-    objectFit: "cover",
-    width: "100%",
-    height: "200px",
-  }}
-/>
+                    src={getImageUrl(news.image)}
+                    alt={news.title}
+                    style={{
+                      objectFit: "cover",
+                      width: "100%",
+                      height: "200px",
+                    }}
+                  />
                 </Card.Section>
-                <Text weight={600} mt="md">
+                <Text weight={600} mt="md" className="line-clamp-2">
                   {news.title}
                 </Text>
-                <Text size="sm" color="dimmed">
+                <Text size="sm" color="dimmed" className="line-clamp-3 mt-1">
                   {news.short}
                 </Text>
               </Card>

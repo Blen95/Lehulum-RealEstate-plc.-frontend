@@ -1,7 +1,16 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { Container, Image, Title, Text, Button, Loader, Center } from "@mantine/core";
-import { fetchNewsById, getImageUrl } from "../api/adminNewsapi.js"; // <-- Import here
+import {
+  Container,
+  Image,
+  Title,
+  Text,
+  Button,
+  Loader,
+  Center,
+  Paper,
+} from "@mantine/core";
+import { fetchNewsById, getImageUrl } from "../api/adminNewsapi.js";
 import Footer from "../components/Footer";
 import Navbar from "../components/Navbar";
 
@@ -35,23 +44,30 @@ export default function NewsDetail() {
     <>
       <Navbar />
 
-      <section className="py-16 bg-white">
-        <Container size="md">
+      <section className="relative w-full overflow-hidden bg-gradient-to-br from-[#fffaf9] via-white to-[#fefefe] py-20 px-6">
+        <Container size="md" className="relative z-10">
           {loading ? (
             <Center>
               <Loader color="red" />
             </Center>
           ) : error ? (
-            <Text color="red" align="center">
+            <Text color="red" align="center" className="text-lg font-medium">
               {error}
             </Text>
           ) : (
-            <>
+            <Paper
+              shadow="lg"
+              radius="xl"
+              p="xl"
+              withBorder
+              className="bg-white border border-red-100/60 backdrop-blur-sm"
+            >
+              {/* News Image */}
               <Image
                 src={getImageUrl(news.image)}
                 alt={news.title}
                 radius="md"
-                className="mt-6 md:mt-12 mx-auto"
+                className="mx-auto mb-8"
                 style={{
                   width: "100%",
                   maxWidth: "900px",
@@ -61,26 +77,41 @@ export default function NewsDetail() {
                 }}
               />
 
-              <Title order={2} className="mb-4 text-red-600">
+              {/* Title */}
+              <Title
+                order={2}
+                align="center"
+                className="mb-6 text-3xl md:text-4xl font-bold font-serif bg-gradient-to-r from-red-600 to-rose-400 bg-clip-text text-transparent"
+              >
                 {news.title}
               </Title>
 
-              <Text className="text-gray-700 text-lg leading-relaxed mb-8" component="div">
-                {/* You can parse line breaks into paragraphs */}
+              {/* Content */}
+              <Text
+                className="text-gray-700 text-lg leading-relaxed mb-10 max-w-3xl mx-auto"
+                component="div"
+              >
                 {news.content.split("\n").map((para, idx) => (
-                  <p key={idx} className="mb-4">{para}</p>
+                  <p key={idx} className="mb-5">
+                    {para}
+                  </p>
                 ))}
               </Text>
 
-              <Button
-                variant="outline"
-                color="red"
-                radius="xl"
-                onClick={() => navigate("/", { state: { targetId: "news" } })}
-              >
-                ← Back to News & Updates
-              </Button>
-            </>
+              {/* Back Button */}
+              <div className="flex justify-center">
+                <Button
+                  variant="outline"
+                  color="red"
+                  radius="xl"
+                  size="md"
+                  onClick={() => navigate("/", { state: { targetId: "news" } })}
+                  className="px-6 font-semibold shadow-md hover:shadow-lg transition-all"
+                >
+                  ← Back to News & Updates
+                </Button>
+              </div>
+            </Paper>
           )}
         </Container>
       </section>

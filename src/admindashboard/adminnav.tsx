@@ -4,70 +4,45 @@ import { useDisclosure } from "@mantine/hooks";
 import { useLocation, useNavigate } from "react-router-dom";
 import Logo from "../assets/lehulumlogo-fotor-bg-remover.png";
 
+interface NavSection {
+  id: string;
+  label: string;
+  path: string;
+}
 
-const sections = [
-  { id: "home", label: "Home" },
-  { id: "apartments", label: "Apartments" },
-  { id: "news", label: "News & Updates" },
-  { id: "clients", label: "Client requests" },
+const sections: NavSection[] = [
+  { id: "home", label: "Home", path: "/admin/home" },
+  { id: "apartments", label: "Apartments", path: "/admin/apartments" },
+  { id: "news", label: "News & Updates", path: "/admin/news" },
+  { id: "clients", label: "Client Requests", path: "/admin/requests" },
 ];
 
 export default function AdminNavbar() {
   const location = useLocation();
-  const [activeSection, setActiveSection] = useState("home");
+  const [activeSection, setActiveSection] = useState<string>("home");
   const [opened, { toggle, close }] = useDisclosure(false);
   const navigate = useNavigate();
 
-  // Detect section closest to top on scroll
-useEffect(() => {
-  const handleScroll = () => {
-    if (location.pathname.startsWith("/news/")) {
-      setActiveSection("news");
-      return;
-    }
+  // Set active section based on current path
+  useEffect(() => {
+    const currentSection = sections.find(section => 
+      location.pathname.startsWith(section.path)
+    )?.id || "home";
+    setActiveSection(currentSection);
+  }, [location.pathname]);
 
-
-    let closestId = sections[0].id;
-    let closestDistance = Infinity;
-
-    sections.forEach(({ id }) => {
-      const el = document.getElementById(id);
-      if (el) {
-        const distance = Math.abs(el.getBoundingClientRect().top - 80); 
-        if (distance < closestDistance) {
-          closestDistance = distance;
-          closestId = id;
-        }
-      }
-    });
-
-    setActiveSection(closestId);
+  const navigateToSection = (path: string) => {
+    navigate(path);
+    close(); // Close drawer on mobile
   };
-
-  window.addEventListener("scroll", handleScroll);
-  handleScroll(); 
-  return () => window.removeEventListener("scroll", handleScroll);
-}, [location.pathname]);
-
-
-  // Scroll or navigate to section
-const scrollToSection = (id: string) => {
-  if (window.location.pathname !== "/") {
-    navigate("/", { state: { targetId: id } });
-  } else {
-    document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
-  }
-  close(); // optional: close drawer
-};
-
 
   return (
     <nav className="fixed top-0 left-0 w-full bg-white shadow z-50 py-4 px-6">
-       <div className="flex justify-between items-center w-full">
+      <div className="flex justify-between items-center w-full">
         {/* Logo */}
         <div
           className="flex items-center cursor-pointer"
-          onClick={() => scrollToSection("home")}
+          onClick={() => navigateToSection("/admin")}
         >
           <img src={Logo} alt="Lehulum Real Estate" className="h-10 w-auto" />
         </div>
@@ -75,10 +50,10 @@ const scrollToSection = (id: string) => {
         {/* Desktop Nav */}
         <div className="hidden md:flex items-center space-x-6">
           <Group spacing="lg">
-            {sections.map(({ id, label }) => (
+            {sections.map(({ id, label, path }) => (
               <button
                 key={id}
-                onClick={() => scrollToSection(id)}
+                onClick={() => navigateToSection(path)}
                 className={`px-4 py-2 rounded-full transition font-medium
                   ${
                     activeSection === id
@@ -91,8 +66,6 @@ const scrollToSection = (id: string) => {
               </button>
             ))}
           </Group>
-
-          
         </div>
 
         {/* Burger Button for Mobile */}
@@ -112,10 +85,10 @@ const scrollToSection = (id: string) => {
       >
         <ScrollArea style={{ height: "100%" }}>
           <div className="flex flex-col space-y-4">
-            {sections.map(({ id, label }) => (
+            {sections.map(({ id, label, path }) => (
               <button
                 key={id}
-                onClick={() => scrollToSection(id)}
+                onClick={() => navigateToSection(path)}
                 className={`px-4 py-2 rounded-full text-left transition font-medium
                   ${
                     activeSection === id

@@ -15,6 +15,7 @@ import {
   Group,
   Badge,
   Overlay,
+  Stack,
 } from "@mantine/core";
 import { motion } from "framer-motion";
 import {
@@ -24,6 +25,7 @@ import {
   updateApartmentImage,
 } from "../api/apartmentapi";
 import { notifications } from "@mantine/notifications";
+import AdminNavbar from "./adminnav";
 
 export type Apartment = {
   id: number;
@@ -123,18 +125,25 @@ export default function AdminApartment() {
   };
 
   return (
-    <Box py={50}>
-      <Container size="xl">
+<div className="relative w-full overflow-hidden bg-gradient-to-br from-[#fffaf9] via-white to-[#fefefe] min-h-screen py-16 px-8">
+      {/* Decorative floating shapes */}
+      <div className="absolute inset-0 z-0">
+        <div className="absolute -top-16 -right-32 w-[35rem] h-[35rem] bg-red-200 rounded-full opacity-10 blur-3xl" />
+        <div className="absolute -bottom-10 left-0 w-[25rem] h-[25rem] bg-rose-100 rounded-full opacity-10 blur-2xl" />
+      </div>
+
+      <Container size="xl" className="relative z-10">
+        <AdminNavbar/>
         <motion.div
           initial={{ opacity: 0, y: 40 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, ease: "easeOut" }}
         >
-          <Title order={2} ta="center" size="1.8rem" fw={700} mb={50} ff="serif">
-            <span className="bg-gradient-to-r from-red-500 to-red-400 bg-clip-text text-transparent">
-              Manage Apartments —
+          <Title order={2} ta="center" size="2rem" fw={700} mb={50} ff="serif">
+            <span className="bg-gradient-to-r from-[#B22234] to-[#FF6B6B] bg-clip-text text-transparent">
+              Manage Apartments
             </span>{" "}
-            image overlays and admin tools.
+            
           </Title>
         </motion.div>
 
@@ -142,22 +151,20 @@ export default function AdminApartment() {
           {apartments.map((apt) => (
             <Grid.Col span={{ base: 12, sm: 6, md: 4 }} key={apt.id}>
               <Card
-                shadow="sm"
-                radius="lg"
+                shadow="lg"
+                radius="xl"
                 p={0}
-                className="transition duration-200 hover:shadow-lg"
+                className="transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl overflow-hidden relative"
                 style={{
-                  height: 360,
-                  overflow: "hidden",
-                  position: "relative",
                   border: apt.remaining_available === 0 ? "2px solid #e03131" : undefined,
+                  height: 380,
                 }}
               >
                 {apt.remaining_available === 0 && (
                   <Badge
                     color="red"
                     variant="filled"
-                    style={{ position: "absolute", top: 10, right: 10, zIndex: 3 }}
+                    className="absolute top-3 right-3 z-10"
                   >
                     Sold Out
                   </Badge>
@@ -166,79 +173,54 @@ export default function AdminApartment() {
                 <Image
                   src={apt.image_url || "/apt-placeholder.jpeg"}
                   alt={apt.type}
-                  height={360}
+                  height={380}
                   fit="cover"
-                  style={{ objectFit: "cover" }}
+                  className="transition-transform duration-300 hover:scale-105"
                 />
 
                 <Overlay
-                  gradient="linear-gradient(to bottom, rgba(0,0,0,0.7), transparent 60%)"
+                  gradient="linear-gradient(to bottom, rgba(0,0,0,0.5), transparent 60%)"
                   opacity={0.7}
                   zIndex={1}
                 />
 
-                <Box
-                  style={{
-                    position: "absolute",
-                    top: 0,
-                    left: 0,
-                    right: 0,
-                    padding: "12px",
-                    color: "white",
-                    fontSize: "0.9rem",
-                    zIndex: 2,
-                  }}
-                >
+                <Box className="absolute top-0 left-0 right-0 p-3 z-10 text-white text-sm">
                   <Text fw={700} size="lg">
                     {apt.type}
                   </Text>
                   <Text>Area: {apt.area} m²</Text>
                   <Text>
                     Available:{" "}
-                    <span
-                      style={{ color: apt.remaining_available === 0 ? "#e03131" : "#40c057" }}
-                    >
+                    <span className={apt.remaining_available === 0 ? "text-red-500" : "text-green-500"}>
                       {apt.remaining_available}
                     </span>
                   </Text>
-                  <Text italic size="sm" mt="xs">
-                    {apt.description.length > 100
-                      ? apt.description.slice(0, 100) + "..."
-                      : apt.description}
+                  <Text italic size="xs" mt="xs" className="line-clamp-3">
+                    {apt.description}
                   </Text>
                 </Box>
 
-                <Box
-                  style={{
-                    position: "absolute",
-                    bottom: 0,
-                    left: 0,
-                    right: 0,
-                    padding: "10px",
-                    background: "rgba(0,0,0,0.55)",
-                    zIndex: 2,
-                  }}
-                >
+                <Box className="absolute bottom-0 left-0 right-0 p-3 bg-black/50 z-10">
                   <Group justify="space-between" spacing="xs" mb="xs">
                     <Button
                       size="xs"
                       variant="filled"
-                      color="indigo"
+                     color="dark"
                       onClick={() => setActiveImageEditId(apt.id)}
                     >
                       {apt.image_url ? "Change Image" : "Add Image"}
                     </Button>
                     <Button
                       size="xs"
-                      variant="outline"
-                      color="indigo"
+                      variant="filled"
+                      color="dark"
                       onClick={() => setActiveDescEditId(apt.id)}
                     >
                       Edit Description
                     </Button>
                   </Group>
 
-                  <Text size="xs" c="gray.2" mb={4}>
+                  <Text size="xs" c="gray.2" mb={2}>
                     Update Availability
                   </Text>
                   <Group spacing={4} grow>
@@ -254,8 +236,8 @@ export default function AdminApartment() {
                     />
                     <Button
                       size="xs"
-                      variant="filled"
-                      color="indigo"
+                      variant="gradient"
+                     gradient={{ from: '#CBAF88', to: '#E4D6B0' }}
                       onClick={() => handleAvailabilityUpdate(apt.id)}
                     >
                       Save
@@ -268,6 +250,7 @@ export default function AdminApartment() {
         </Grid>
       </Container>
 
+      {/* Modals */}
       <Modal
         opened={activeImageEditId !== null}
         onClose={() => setActiveImageEditId(null)}
@@ -275,7 +258,7 @@ export default function AdminApartment() {
         centered
       >
         {activeImageEditId !== null && (
-          <>
+          <Stack>
             <FileInput
               label="Select image"
               accept="image/png,image/jpeg,image/webp"
@@ -285,6 +268,8 @@ export default function AdminApartment() {
             />
             <Button
               mt="md"
+              variant="gradient"
+              gradient={{ from: '#B22234', to: '#FF6B6B' }}
               onClick={() => {
                 handleImageUpdate(activeImageEditId);
                 setActiveImageEditId(null);
@@ -292,7 +277,7 @@ export default function AdminApartment() {
             >
               Save Image
             </Button>
-          </>
+          </Stack>
         )}
       </Modal>
 
@@ -303,7 +288,7 @@ export default function AdminApartment() {
         centered
       >
         {activeDescEditId !== null && (
-          <>
+          <Stack>
             <Textarea
               label="New Description"
               minRows={4}
@@ -316,6 +301,8 @@ export default function AdminApartment() {
             />
             <Button
               mt="md"
+              variant="gradient"
+              gradient={{ from: '#B22234', to: '#FF6B6B' }}
               onClick={() => {
                 handleDescriptionUpdate(activeDescEditId);
                 setActiveDescEditId(null);
@@ -323,9 +310,9 @@ export default function AdminApartment() {
             >
               Save Description
             </Button>
-          </>
+          </Stack>
         )}
       </Modal>
-    </Box>
+    </div>
   );
 }
